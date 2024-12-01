@@ -15,7 +15,7 @@ public class Generator
     private const int BOARD_SIZE = 9;
     private const int SUBGRID_SIZE = 3;
     private const int GRID_SIZE = 9;
-    private const int MIN_SQUARES_REMOVED = 30;
+    private const int MIN_SQUARES_REMOVED = 10;
     private const int MAX_SQUARES_REMOVED = 50;
 
     public static int[,] GeneratePuzzle(DifficultyLevel level)

@@ -141,6 +141,7 @@ public class GameManager : MonoBehaviour
         {
             for(int j = 0;j < GRID_SIZE; j++)
             {
+                cells[i, j].Reset(); //reset lại màu sau mỗi lần chuyển số
                 if (cells[i, j].Value == cells[currentRow, currentCol].Value && cells[i, j].IsLocked)
                 {
                     cells[i, j].Select();

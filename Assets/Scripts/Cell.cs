@@ -110,12 +110,18 @@ public class Cell : MonoBehaviour
                 _bgSprite.color = _resetWrongCellColor;
                 _valueText.color = _resetWrongTextColor;
             }
+            else if (_bgSprite.color != _startLockedCellColor)
+            {
+                _bgSprite.color = _startLockedCellColor;
+
+            }
             else
             {
                 _bgSprite.color = _resetCellColor;
                 _valueText.color = _resetTextColor;
             }
         }
+        
     }
 
     public void UpdateValue(int value)
