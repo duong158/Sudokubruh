@@ -289,26 +289,19 @@ MonoBehaviour:
   Col: 0
   IsLocked: 0
   IsIncorrect: 0
+  IsSimilar: 0
   _bgSprite: {fileID: 8466747989954425132}
   _valueText: {fileID: 7133687976396806392}
   _startUnlockedCellColor: {r: 1, g: 1, b: 1, a: 1}
-  _startUnlockedTextColor: {r: 0, g: 0, b: 0, a: 1}
   _startLockedCellColor: {r: 1, g: 1, b: 1, a: 1}
-  _startLockedTextColor: {r: 0, g: 0, b: 0, a: 1}
-  _highlightLockedTextColor: {r: 0.19999999, g: 0, b: 0, a: 1}
-  _highlightUnlockedTextColor: {r: 0.6603774, g: 0.29280883, b: 0.64042425, a: 1}
   _highlightLockedCellColor: {r: 0.8941177, g: 0.8941177, b: 0.8941177, a: 1}
   _highlightUnlockedCellColor: {r: 0.89433956, g: 0.89433956, b: 0.89433956, a: 1}
-  _highlightWrongCellColor: {r: 1, g: 0.35283017, b: 0.37245926, a: 1}
-  _highlightWrongTextColor: {r: 0.5471698, g: 0.06268755, b: 0, a: 1}
+  _highlightWrongCellColor: {r: 1, g: 0.28490567, b: 0.28490567, a: 1}
+  _highlightSimilarCellColor: {r: 0.73333335, g: 0.82745105, b: 0.9843138, a: 1}
   _selectedCellColor: {r: 0.73403347, g: 0.82862455, b: 0.98490566, a: 1}
-  _selectedTextColor: {r: 0, g: 0, b: 0, a: 1}
-  _selectedWrongTextColor: {r: 0, g: 0, b: 0, a: 1}
   _selectedWrongCellColor: {r: 1, g: 0.6449814, b: 0.6396227, a: 1}
   _resetCellColor: {r: 1, g: 1, b: 1, a: 1}
-  _resetTextColor: {r: 0.3056603, g: 0.082470596, b: 0.17482603, a: 1}
   _resetWrongCellColor: {r: 0.8000001, g: 0.28235295, b: 0.29803923, a: 1}
-  _resetWrongTextColor: {r: 0.3056603, g: 0, b: 0.19219247, a: 1}
 --- !u!1 &3297332669883385391
 GameObject:
   m_ObjectHideFlags: 0

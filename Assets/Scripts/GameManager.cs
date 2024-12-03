@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
+    //hàm nhận input của người chơi
     public void UpdateCellValue(int value)
     {
         if (hasGameFinished || selectedCell == null) { return; }
@@ -122,14 +122,14 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < GRID_SIZE; j++)
             {
-                cells[i, j].IsIncorrect = !isValid(cells[i, j], cells);
+                cells[i, j].IsIncorrect = !(isValid(cells[i, j], cells) && IsUnique(cells[i,j], cells));
             }
         }
         int currentRow = selectedCell.Row;
         int currentCol = selectedCell.Col;
         int subGridRow = currentRow - currentRow % SUBGRID_SIZE;
         int subGridCol = currentCol - currentCol % SUBGRID_SIZE;
-
+        //highlight cả các số giống với số trong ô được chọn
         for (int i = 0; i < GRID_SIZE; i++)
         {
             for (int j = 0; j < GRID_SIZE; j++)
@@ -137,12 +137,13 @@ public class GameManager : MonoBehaviour
                 //reset lại màu sau mỗi lần chuyển số
                 if (cells[i, j].Value == cells[currentRow, currentCol].Value && cells[i, j].IsLocked)
                 {
-
-                    cells[i, j].Select();
+                    cells[i, j].IsSimilar = true;
+                    cells[i, j].Highlight();
 
                 }
                 else
                 {
+                    cells[i, j].IsSimilar = false;
                     cells[i, j].Reset();
                 }
 
@@ -198,17 +199,40 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-
-        // Nếu không có trùng lặp, giá trị là hợp lệ
-        return true;
+        return true;    
     }
+    //Kiểm tra tính độc nhất của kết quả
+    private bool IsUnique(Cell cell, Cell[,] cells)
+    {
+        int count = 0;
+        int row = cell.Row;
+        int col = cell.Col;
+        int value = cell.Value;
 
-
+        if (cell != selectedCell)
+        {
+            return true;
+        }
+        for (int i = 1; i <= 9; i++)
+        {
+            cells[row, col].Value = i;
+            if (isValid(cells[row,col], cells))
+            {
+                count++;
+            }
+            cells[row, col].Value = value;
+        }
+        if (count > 1)
+        {
+            return false;
+        }
+        else { return true; }
+    }
 
 
     public void RestartGame()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
 }

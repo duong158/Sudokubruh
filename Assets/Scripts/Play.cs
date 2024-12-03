@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NewGame : MonoBehaviour
+public class Play : MonoBehaviour
 {
     public void RestartGame()
     {
