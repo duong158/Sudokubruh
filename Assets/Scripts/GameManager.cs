@@ -31,9 +31,9 @@ public class GameManager : MonoBehaviour
 
     private void SpawnCells()
     {
-        int[,] puzzleGrid = Generator.GeneratePuzzle(Generator.DifficultyLevel.EASY);
+        int[,] puzzleGrid = Generator.GeneratePuzzle(Generator.DifficultyLevel.DIFFICULT);
 
-        for (int i = 0; i < GRID_SIZE; i++) //lấy input của chuột
+        for (int i = 0; i < GRID_SIZE; i++) //tạo cell cho bảng sudoku
         {
             Vector3 spawnPos = _startPos + i % 3 * _offsetX * Vector3.right + i / 3 * _offsetY * Vector3.up;
             SubGrid subGrid = Instantiate(_subGridPrefab, spawnPos, Quaternion.identity);
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         if (hasGameFinished || !Input.GetMouseButton(0)) { return; }
-
+        
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
         RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
@@ -90,11 +90,18 @@ public class GameManager : MonoBehaviour
         if (hasGameFinished || selectedCell == null) { return; }
         if (!selectedCell.IsLocked)
         {
-            if (selectedCell.Value != 0)
+            if (selectedCell.Value == value)
             {
-                selectedCell.UpdateValue(0);
+                selectedCell.UpdateValue(0); //nhập hai lần cùng giá trị thì sẽ reset
             }
-            else { selectedCell.UpdateValue(value); }
+            else 
+            { 
+                selectedCell.UpdateValue(value);
+                //if (isValid(selectedCell, cells))
+                //{
+                    //selectedCell.IsLocked = true; //lock ô lại sau khi người chơi nhập đáp án đúng(dùng lại khi làm được hàm check đáp án duy nhất)
+                //}
+            }
         }
             
         Highlight();
@@ -108,10 +115,10 @@ public class GameManager : MonoBehaviour
             for (int j = 0; j < GRID_SIZE; j++)
             {
                 if (cells[i, j].IsIncorrect || cells[i, j].Value == 0) return;
+                
             }
-            hasGameFinished = true;
         }
-
+        hasGameFinished = true;
         for (int i = 0; i < GRID_SIZE; i++)
         {
             for (int j = 0; j < GRID_SIZE; j++)
@@ -129,7 +136,7 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < GRID_SIZE; j++)
             {
-                cells[i, j].IsIncorrect = !(isValid(cells[i, j], cells) && IsUnique(cells[i,j], cells));
+                cells[i, j].IsIncorrect = !(isValid(cells[i, j], cells));
             }
         }
         int currentRow = selectedCell.Row;
@@ -155,6 +162,7 @@ public class GameManager : MonoBehaviour
                 }
 
             }
+            
         }
 
         for (int i = 0; i < GRID_SIZE; i++)
@@ -172,6 +180,7 @@ public class GameManager : MonoBehaviour
         int row = cell.Row;
         int col = cell.Col;
         int value = cell.Value;
+        cell.Value = 0;
 
         if (value == 0)
         {
@@ -183,14 +192,17 @@ public class GameManager : MonoBehaviour
         {
             if (cells[row, i].Value == value && i != col) // Trùng trong hàng
             {
+                cell.Value = value;
                 return false;
             }
 
             if (cells[i, col].Value == value && i != row) // Trùng trong cột
             {
+                cell.Value = value;
                 return false;
             }
         }
+        
 
         // Kiểm tra trùng lặp trong subgrid
         int subGridRow = row - row % SUBGRID_SIZE;
@@ -202,13 +214,15 @@ public class GameManager : MonoBehaviour
             {
                 if (cells[r, c].Value == value && (r != row || c != col))
                 {
+                    cell.Value = value;
                     return false;
                 }
             }
         }
-        return true;    
+        cell.Value = value;
+        return true;
     }
-    //Kiểm tra tính độc nhất của kết quả
+    //Kiểm tra tính độc nhất của kết quả(không dùng nx)
     private bool IsUnique(Cell cell, Cell[,] cells)
     {
         int count = 0;

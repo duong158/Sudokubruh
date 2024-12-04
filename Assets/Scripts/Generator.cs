@@ -8,6 +8,7 @@ public class Generator
 {
     public enum DifficultyLevel
     {
+        SAMPLE,
         EASY,
         MEDIUM,
         DIFFICULT
@@ -15,7 +16,7 @@ public class Generator
     private const int BOARD_SIZE = 9;
     private const int SUBGRID_SIZE = 3;
     private const int GRID_SIZE = 9;
-    private const int MIN_SQUARES_REMOVED = 10;
+    private const int MIN_SQUARES_REMOVED = 5;
     private const int MAX_SQUARES_REMOVED = 50;
 
     public static int[,] GeneratePuzzle(DifficultyLevel level)
@@ -25,6 +26,9 @@ public class Generator
 
         switch(level)
         {
+            case DifficultyLevel.SAMPLE:
+                squaresToRemove = 0;
+                break;
             case DifficultyLevel.EASY:
                 squaresToRemove = Random.Range(MIN_SQUARES_REMOVED, MIN_SQUARES_REMOVED + 5);
                 break;
@@ -32,7 +36,7 @@ public class Generator
                 squaresToRemove = Random.Range(MIN_SQUARES_REMOVED + 5, MIN_SQUARES_REMOVED + 10);
                 break;
             case DifficultyLevel.DIFFICULT:
-                squaresToRemove = Random.Range(MIN_SQUARES_REMOVED + 10, MAX_SQUARES_REMOVED);
+                squaresToRemove = Random.Range(MIN_SQUARES_REMOVED + 40, MAX_SQUARES_REMOVED);
                 break;
             default:
                 break;
@@ -81,7 +85,7 @@ public class Generator
         }
         if (c == GRID_SIZE)
         {
-            return FillGrid(r+1, c , grid);
+            return FillGrid(r+1, 0 , grid);
         }
         List<int> numbers = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         Shuffle(numbers);
