@@ -89,7 +89,14 @@ public class GameManager : MonoBehaviour
     {
         if (hasGameFinished || selectedCell == null) { return; }
         if (!selectedCell.IsLocked)
-            selectedCell.UpdateValue(value);
+        {
+            if (selectedCell.Value != 0)
+            {
+                selectedCell.UpdateValue(0);
+            }
+            else { selectedCell.UpdateValue(value); }
+        }
+            
         Highlight();
         CheckWin();
     }
