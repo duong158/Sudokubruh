@@ -89,6 +89,7 @@ public class GameManager : MonoBehaviour
         }
     }
     //hàm nhận input của người chơi
+
     public void UpdateCellValue(int value)
     {
         if (hasGameFinished || selectedCell == null) { return; }
