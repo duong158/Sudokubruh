@@ -10,9 +10,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SubGrid _subGridPrefab;
     [SerializeField] private TMP_Text _levelText;
 
+    public StopwatchTimer StopwatchTimer;
+
     private bool hasGameFinished;
     private Cell[,] cells;
     private Cell selectedCell;
+
+    private bool pencilOn = false;
 
     private const int GRID_SIZE = 9;
     private const int SUBGRID_SIZE = 3;
@@ -88,22 +92,43 @@ public class GameManager : MonoBehaviour
     public void UpdateCellValue(int value)
     {
         if (hasGameFinished || selectedCell == null) { return; }
-        if (!selectedCell.IsLocked)
+        if (pencilOn && !selectedCell.IsLocked ) //nhận input người dùng  vào lưới pencil
         {
-            if (selectedCell.Value == value)
+            selectedCell.UpdateValue(value);
+            foreach (var note in selectedCell.notes)
             {
-                selectedCell.UpdateValue(0); //nhập hai lần cùng giá trị thì sẽ reset
+                if (isValid(selectedCell, cells))
+                {
+                    note.UpdateNoteValue(value);
+                }
+
             }
-            else 
-            { 
-                selectedCell.UpdateValue(value);
-                //if (isValid(selectedCell, cells))
-                //{
+            selectedCell.UpdateValue(0);
+        }
+        else
+        {
+            if (!selectedCell.IsLocked)
+            {
+                if (selectedCell.Value == value)
+                {
+                    selectedCell.UpdateValue(0); //nhập hai lần cùng giá trị thì sẽ reset
+                }
+                else
+                {
+                    selectedCell.UpdateValue(value);
+                    //if (isValid(selectedCell, cells))
+                    //{
                     //selectedCell.IsLocked = true; //lock ô lại sau khi người chơi nhập đáp án đúng(dùng lại khi làm được hàm check đáp án duy nhất)
-                //}
+                    //}
+
+                }
+
+            }
+            foreach (var note in selectedCell.notes)
+            {
+                note.Reset();
             }
         }
-            
         Highlight();
         CheckWin();
     }
@@ -250,10 +275,14 @@ public class GameManager : MonoBehaviour
         else { return true; }
     }
 
-
+    public void pencilToggles() //bật/tắt pencil
+    {
+        pencilOn = !pencilOn;
+    }
     public void RestartGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        StopwatchTimer.ResetTimer();
     }
 
 }

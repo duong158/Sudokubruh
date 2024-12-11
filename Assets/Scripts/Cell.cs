@@ -5,6 +5,9 @@ using TMPro;
 
 public class Cell : MonoBehaviour
 {
+    [SerializeField] public List<Notecells> notes;
+
+
     [HideInInspector] public int Value;
     [HideInInspector] public int Row;
     [HideInInspector] public int Col;
