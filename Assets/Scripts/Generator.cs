@@ -1,8 +1,6 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 
 public class Generator
 {
@@ -19,12 +17,14 @@ public class Generator
     private const int MIN_SQUARES_REMOVED = 5;
     private const int MAX_SQUARES_REMOVED = 50;
 
+    private static int[,] originalGrid = new int[GRID_SIZE, GRID_SIZE];
+
     public static int[,] GeneratePuzzle(DifficultyLevel level)
     {
         var grid = new int[GRID_SIZE, GRID_SIZE];
         int squaresToRemove = 0;
 
-        switch(level)
+        switch (level)
         {
             case DifficultyLevel.SAMPLE:
                 squaresToRemove = 0;
@@ -43,15 +43,16 @@ public class Generator
         }
 
         IntializedGrid(grid);
+        SaveOriginalGrid(grid);
 
-        while(squaresToRemove > 0)
+        while (squaresToRemove > 0)
         {
             int randRow = Random.Range(0, BOARD_SIZE);
             int randCol = Random.Range(0, BOARD_SIZE);
 
             if (grid[randRow, randCol] != 0)
             {
-                int temp  = grid[randRow, randCol];
+                int temp = grid[randRow, randCol];
                 grid[randRow, randCol] = 0;
 
                 if (Solver.HasUniqueSolution(grid))
@@ -66,15 +67,32 @@ public class Generator
         }
         return grid;
     }
+
+    private static void SaveOriginalGrid(int[,] grid)
+    {
+        for (int r = 0; r < GRID_SIZE; r++)
+        {
+            for (int c = 0; c < GRID_SIZE; c++)
+            {
+                originalGrid[r, c] = grid[r, c];
+            }
+        }
+    }
+
+    public static int[,] GetOriginalGrid()
+    {
+        return originalGrid;
+    }
+
     public static void IntializedGrid(int[,] grid)
     {
-        List<int> numbers = new List<int>() { 1, 2, 3 ,4 ,5 ,6 ,7 ,8, 9};
+        List<int> numbers = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         Shuffle(numbers);
         for (int i = 0; i < GRID_SIZE; i++)
         {
-            grid[0,i] = numbers[i];
+            grid[0, i] = numbers[i];
         }
-        FillGrid(1, 0 , grid);
+        FillGrid(1, 0, grid);
     }
 
     private static bool FillGrid(int r, int c, int[,] grid)
@@ -85,29 +103,26 @@ public class Generator
         }
         if (c == GRID_SIZE)
         {
-            return FillGrid(r+1, 0 , grid);
+            return FillGrid(r + 1, 0, grid);
         }
         List<int> numbers = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         Shuffle(numbers);
         foreach (var num in numbers)
         {
             if (IsValid(grid, r, c, num))
-            { 
-                grid[r,c] = num;
-                if (FillGrid(r , c+1 , grid))
+            {
+                grid[r, c] = num;
+                if (FillGrid(r, c + 1, grid))
                 {
                     return true;
                 }
-                
+
             }
-
-
         }
-        
-        
         grid[r, c] = 0;
         return false;
     }
+
     private static bool IsValid(int[,] board, int row, int col, int val)
     {
         for (int i = 0; i < BOARD_SIZE; i++)
@@ -129,6 +144,7 @@ public class Generator
         }
         return true;
     }
+
     private static void Shuffle<T>(List<T> list)
     {
         int n = list.Count;

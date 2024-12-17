@@ -350,12 +350,12 @@ MonoBehaviour:
   _startLockedCellColor: {r: 1, g: 1, b: 1, a: 1}
   _highlightLockedCellColor: {r: 0.8941177, g: 0.8941177, b: 0.8941177, a: 1}
   _highlightUnlockedCellColor: {r: 0.89433956, g: 0.89433956, b: 0.89433956, a: 1}
-  _highlightWrongCellColor: {r: 1, g: 0.28490567, b: 0.28490567, a: 1}
+  _highlightWrongCellColor: {r: 1, g: 0.6431373, b: 0.6392157, a: 1}
   _highlightSimilarCellColor: {r: 0.73333335, g: 0.82745105, b: 0.9843138, a: 1}
   _selectedCellColor: {r: 0.73403347, g: 0.82862455, b: 0.98490566, a: 1}
   _selectedWrongCellColor: {r: 1, g: 0.6449814, b: 0.6396227, a: 1}
   _resetCellColor: {r: 1, g: 1, b: 1, a: 1}
-  _resetWrongCellColor: {r: 0.8000001, g: 0.28235295, b: 0.29803923, a: 1}
+  _resetWrongCellColor: {r: 1, g: 0.6431373, b: 0.6392157, a: 1}
 --- !u!1 &3297332669883385391
 GameObject:
   m_ObjectHideFlags: 0

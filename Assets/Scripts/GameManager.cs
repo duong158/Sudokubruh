@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -16,7 +17,10 @@ public class GameManager : MonoBehaviour
     private Cell[,] cells;
     private Cell selectedCell;
 
+    private int[,] sampleGrid = Generator.GetOriginalGrid();
+
     private bool pencilOn = false;
+
 
     private const int GRID_SIZE = 9;
     private const int SUBGRID_SIZE = 3;
@@ -93,22 +97,23 @@ public class GameManager : MonoBehaviour
     public void UpdateCellValue(int value)
     {
         if (hasGameFinished || selectedCell == null) { return; }
-        if (pencilOn && !selectedCell.IsLocked ) //nhận input người dùng  vào lưới pencil
+        if (!selectedCell.IsLocked)
         {
-            selectedCell.UpdateValue(value);
-            foreach (var note in selectedCell.notes)
+            if (pencilOn) //nhận input người dùng  vào lưới pencil
             {
-                if (isValid(selectedCell, cells))
+                selectedCell.UpdateValue(value);
+                foreach (var note in selectedCell.notes)
                 {
-                    note.UpdateNoteValue(value);
-                }
+                    if (isValid(selectedCell, cells))
+                    {
+                        note.UpdateNoteValue(value);
+                    }
 
+
+                }
+                selectedCell.UpdateValue(0);
             }
-            selectedCell.UpdateValue(0);
-        }
-        else
-        {
-            if (!selectedCell.IsLocked)
+            else
             {
                 if (selectedCell.Value == value)
                 {
@@ -117,19 +122,41 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     selectedCell.UpdateValue(value);
-                    //if (isValid(selectedCell, cells))
-                    //{
-                    //selectedCell.IsLocked = true; //lock ô lại sau khi người chơi nhập đáp án đúng(dùng lại khi làm được hàm check đáp án duy nhất)
-                    //}
+                    if (selectedCell.Value == sampleGrid[selectedCell.Row, selectedCell.Col])
+                    {
+                        selectedCell.IsLocked = true; //lock ô lại sau khi người chơi nhập đáp án đúng(dùng lại khi làm được hàm check đáp án duy nhất)
+                    }
 
                 }
 
-            }
-            foreach (var note in selectedCell.notes)
-            {
-                note.Reset();
+                
+                foreach (var note in selectedCell.notes)
+                {
+                    note.Reset();
+                }
             }
         }
+        //xóa ô gợi ý nếu đã có số điền hợp lệ (vẫn đang bug: khi điền vào vẫn sẽ mất bất kể input đúng hay sai)
+        for (int i = 0; i < GRID_SIZE; i++)
+        {
+            for (int j = 0; j < GRID_SIZE; j++)
+            {
+                if (!cells[i, j].IsLocked && cells[i,j] != selectedCell && !selectedCell.IsIncorrect)
+                {
+                    foreach (var note in cells[i, j].notes)
+                    {
+                        cells[i, j].UpdateValue(note.Value);
+                        if (!isValid(cells[i, j], cells))
+                        {
+                            note.Reset();
+                        }
+                        cells[i, j].UpdateValue(0);
+                    }
+                }
+            }
+
+        }
+
         Highlight();
         CheckWin();
     }
@@ -162,7 +189,8 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < GRID_SIZE; j++)
             {
-                cells[i, j].IsIncorrect = !(isValid(cells[i, j], cells));
+                if (cells[i, j].Value == 0) cells[i, j].IsIncorrect = false;
+                else { cells[i, j].IsIncorrect = !(cells[i, j].Value == sampleGrid[i, j]); }//check tính hợp lệ của kết quả
             }
         }
         int currentRow = selectedCell.Row;
@@ -248,34 +276,7 @@ public class GameManager : MonoBehaviour
         cell.Value = value;
         return true;
     }
-    //Kiểm tra tính độc nhất của kết quả(không dùng nx)
-    private bool IsUnique(Cell cell, Cell[,] cells)
-    {
-        int count = 0;
-        int row = cell.Row;
-        int col = cell.Col;
-        int value = cell.Value;
-
-        if (cell != selectedCell)
-        {
-            return true;
-        }
-        for (int i = 1; i <= 9; i++)
-        {
-            cells[row, col].Value = i;
-            if (isValid(cells[row,col], cells))
-            {
-                count++;
-            }
-            cells[row, col].Value = value;
-        }
-        if (count > 1)
-        {
-            return false;
-        }
-        else { return true; }
-    }
-
+    
     public void pencilToggles() //bật/tắt pencil
     {
         pencilOn = !pencilOn;
@@ -286,4 +287,5 @@ public class GameManager : MonoBehaviour
         StopwatchTimer.ResetTimer();
     }
 
+   
 }
