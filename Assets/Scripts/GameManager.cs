@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -39,7 +40,8 @@ public class GameManager : MonoBehaviour
 
     private void SpawnCells()
     {
-        int[,] puzzleGrid = Generator.GeneratePuzzle(Generator.DifficultyLevel.DIFFICULT);
+        int difficulty = PlayerPrefs.GetInt("SelectedDifficulty", (int)Generator.DifficultyLevel.MEDIUM); // Mặc định MEDIUM
+        int[,] puzzleGrid = Generator.GeneratePuzzle((Generator.DifficultyLevel)difficulty);
 
         for (int i = 0; i < GRID_SIZE; i++) //tạo cell cho bảng sudoku
         {
@@ -99,20 +101,29 @@ public class GameManager : MonoBehaviour
         if (hasGameFinished || selectedCell == null) { return; }
         if (!selectedCell.IsLocked)
         {
-            if (pencilOn) //nhận input người dùng  vào lưới pencil
+            if (pencilOn) // nhận input người dùng vào lưới pencil
             {
-                selectedCell.UpdateValue(value);
-                foreach (var note in selectedCell.notes)
+                if (value == 0) // Nếu giá trị là 0, xóa toàn bộ ghi chú
                 {
+                    foreach (var note in selectedCell.notes)
+                    {
+                        note.Reset(); // Xóa ghi chú
+                    }
+                }
+                else // Thêm giá trị vào ghi chú
+                {
+                    selectedCell.UpdateValue(value); // Tạm thời cập nhật để kiểm tra tính hợp lệ
                     if (isValid(selectedCell, cells))
                     {
-                        note.UpdateNoteValue(value);
+                        foreach (var note in selectedCell.notes)
+                        {
+                            note.UpdateNoteValue(value); // Thêm giá trị ghi chú
+                        }
                     }
-
-
+                    selectedCell.UpdateValue(0); // Đặt lại giá trị về 0 sau khi xử lý
                 }
-                selectedCell.UpdateValue(0);
             }
+
             else
             {
                 if (selectedCell.Value == value)
@@ -141,21 +152,30 @@ public class GameManager : MonoBehaviour
         {
             for (int j = 0; j < GRID_SIZE; j++)
             {
-                if (!cells[i, j].IsLocked && cells[i,j] != selectedCell && !selectedCell.IsIncorrect)
+                // Chỉ xử lý các ô không bị khóa, không phải selectedCell, và selectedCell phải chính xác
+                if (!cells[i, j].IsLocked && cells[i, j] != selectedCell && selectedCell.Value == sampleGrid[selectedCell.Row, selectedCell.Col])
                 {
-                    foreach (var note in cells[i, j].notes)
+                    // Kiểm tra ô hiện tại có nằm trong cùng hàng, cột hoặc ô 3x3 với ô vừa điền không
+                    bool isInSameRow = (i == selectedCell.Row);
+                    bool isInSameCol = (j == selectedCell.Col);
+                    bool isInSameSubGrid = (i / SUBGRID_SIZE == selectedCell.Row / SUBGRID_SIZE && j / SUBGRID_SIZE == selectedCell.Col / SUBGRID_SIZE);
+
+                    if (isInSameRow || isInSameCol || isInSameSubGrid)
                     {
-                        cells[i, j].UpdateValue(note.Value);
-                        if (!isValid(cells[i, j], cells))
+                        foreach (var note in cells[i, j].notes)
                         {
-                            note.Reset();
+                            // Xóa ghi chú nếu giá trị trùng với giá trị chính xác đã nhập
+                            if (note.Value == selectedCell.Value)
+                            {
+                                note.Reset();
+                            }
                         }
-                        cells[i, j].UpdateValue(0);
                     }
                 }
             }
-
         }
+
+
 
         Highlight();
         CheckWin();
@@ -283,9 +303,20 @@ public class GameManager : MonoBehaviour
     }
     public void RestartGame()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Reload scene hiện tại
         StopwatchTimer.ResetTimer();
     }
+    public void QuitGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+    }   
+    public void Hint()
+    {
+        if (selectedCell == null) return;
+        selectedCell.UpdateValue(sampleGrid[selectedCell.Row, selectedCell.Col]);
+        selectedCell.IsLocked = true;
+        selectedCell.Highlight();
+        CheckWin();
+    }
 
-   
 }

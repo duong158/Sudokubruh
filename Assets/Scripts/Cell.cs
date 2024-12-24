@@ -35,6 +35,14 @@ public class Cell : MonoBehaviour
     [Header("Reset")]
     [SerializeField] private Color _resetCellColor;
     [SerializeField] private Color _resetWrongCellColor;
+    [Header("Audio")]
+    [SerializeField] private AudioClip _clickSound; 
+
+    private AudioSource _audioSource; 
+    private void Awake()
+    {
+        _audioSource = gameObject.AddComponent<AudioSource>(); 
+    }
 
     public void Init(int value)
     {
@@ -87,6 +95,10 @@ public class Cell : MonoBehaviour
         else
         {
             _bgSprite.color = _selectedCellColor;
+        }
+        if (_clickSound != null)
+        {
+            _audioSource.PlayOneShot(_clickSound);
         }
     }
     public void Reset()

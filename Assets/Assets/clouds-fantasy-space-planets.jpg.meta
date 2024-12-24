@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      clouds-fantasy-space-planets_0: -1338112810205825611
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -356,6 +356,7 @@ MonoBehaviour:
   _selectedWrongCellColor: {r: 1, g: 0.6449814, b: 0.6396227, a: 1}
   _resetCellColor: {r: 1, g: 1, b: 1, a: 1}
   _resetWrongCellColor: {r: 1, g: 0.6431373, b: 0.6392157, a: 1}
+  _clickSound: {fileID: 8300000, guid: 1deb6ce0c9d038e44b786871bceda72b, type: 3}
 --- !u!1 &3297332669883385391
 GameObject:
   m_ObjectHideFlags: 0
